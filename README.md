@@ -1,4 +1,4 @@
 # LinearB demo App
 
-I'm from dev-01 branch
+I'm from SCRUM-3
 
