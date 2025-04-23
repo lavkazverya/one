@@ -95,4 +95,4 @@ is:
   formatting: {{ source.diff.files | isFormattingChange }}
   docs: {{ files | allDocs }}
   tests: {{ files | allTests }}
-  asset: {{ files | match(regex=r/\.(png|svg|gif|css)$/) | every }}
+  asset: {{ files | match(regex=r/\.(png|svg|gif|css|md)$/) | every }}
