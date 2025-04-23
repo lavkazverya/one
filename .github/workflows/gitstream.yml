@@ -1,0 +1,21 @@
+# -*- mode: yaml -*-
+
+    manifest:
+        version: 1.0
+      
+    config:
+        admin:
+          users: [zvercodebender]
+      
+    automations:
+        estimated_time_to_review:
+            if:
+                - true
+            run:
+                - action: add-label@v1
+                     args:
+                        label: "{{ calc.etr }} min review"
+                        color: {{ 'E94637'  if (calc.etr >= 20) else ('F88D10' if (calc.etr >= 5) Else '36A853') }}
+                        
+    calc:
+        etr: {{ branch | estimatedRevisionTime }}
