@@ -9,58 +9,69 @@ automations:
   # Use LinearB's AI service to review the changes
   linearb_ai_review:
     on:
-      - pr_created
-      - commit
+    - pr_created
+    - commit
     if:
-      - {{ not pr.draft }}
-      - {{ pr.author | match(list=['github-actions', 'dependabot', '[bot]']) | nope }}
+    - {{ not pr.draft }}
+    - {{ pr.author | match(list=['github-actions', 'dependabot', '[bot]']) | nope }}
     run:
-      - action: code-review@v1
+    - action: code-review@v1
 
   # Use LinearB's AI service to add a description to the PR
   linearb_ai_description:
     on:
-      - pr_created
-      - commit
+    - pr_created
+    - commit
     if:
-      - {{ not pr.draft }}
-      - {{ pr.author | match(list=['github-actions', 'dependabot', '[bot]']) | nope }}
+    - {{ not pr.draft }}
+    - {{ pr.author | match(list=['github-actions', 'dependabot', '[bot]']) | nope }}
     run:
-      - action: describe-changes@v1
-        args:
-          concat_mode: append
+    - action: describe-changes@v1
+      args:
+        concat_mode: append
 
   # Add a label indicating how long it will take to review the PR.
   estimated_time_to_review:
+    on:
+    - pr_created
+    - commit
     if:
-      - true
+    - true
     run:
-      - action: add-label@v1
-        args:
-          label: "{{ calc.etr }} min review"
-          color: {{ colors.red if (calc.etr >= 20) else ( colors.yellow if (calc.etr >= 5) else colors.green ) }}
+    - action: add-label@v1
+      args:
+        label: "{{ calc.etr }} min review"
+        color: {{ colors.red if (calc.etr >= 20) else ( colors.yellow if (calc.etr >= 5) else colors.green ) }}
   # Inform PR authors when they fail to reference Jira tickets in the PR title or description.
   label_missing_jira_info:
     if:
-      - {{ not (has.jira_ticket_in_title or has.jira_ticket_in_desc) }}
+    - {{ not (has.jira_ticket_in_title or has.jira_ticket_in_desc) }}
     run:
-      - action: add-label@v1
-        args:
-          label: "missing-jira"
-          color: {{ colors.red }}
-      - action: add-comment@v1
-        args:
-          comment: |
+    - action: add-label@v1
+      args:
+        label: "missing-jira"
+        color: {{ colors.red }}
+    - action: add-comment@v1
+      args:
+        comment: |
             This PR is missing a Jira ticket reference in the title or description.
             Please add a Jira ticket reference to the title or description of this PR.
   # Post a comment that lists the best experts for the files that were modified.
   explain_code_experts:
     if:
-      - true
+    - true
     run:
-      - action: explain-code-experts@v1 
-        args:
-          gt: 10 
+    - action: explain-code-experts@v1 
+      args:
+        gt: 10 
+approve_safe_changes:
+  if:
+    - {{ is.formatting or is.docs or is.tests or is.asset }}
+  run:
+    - action: add-label@v1
+      args:
+        label: 'safe-changes'
+    - action: approve@v1
 
 
 # +----------------------------------------------------------------------------+
@@ -79,3 +90,9 @@ colors:
   red: 'b60205'
   yellow: 'fbca04'
   green: '0e8a16'
+
+is:
+  formatting: {{ source.diff.files | isFormattingChange }}
+  docs: {{ files | allDocs }}
+  tests: {{ files | allTests }}
+  asset: {{ files | match(regex=r/\.(png|svg|gif|css)$/) | every }}
