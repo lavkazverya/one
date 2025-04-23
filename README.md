@@ -2,4 +2,4 @@
 
 I'm from SCRUM-8
 
-Fix Bug 2 next commit
+Fix Bug 2 
