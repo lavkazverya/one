@@ -1,5 +1,5 @@
 # LinearB demo App
 
-I'm from SCRUM-3
+I'm from SCRUM-8
 
-Fix Bug 1
+Fix Bug 2 
