@@ -14,13 +14,14 @@ services:
   frontend:
     build:
       context: ./client
-      dockerfile: dev.Dockerfile
+      dockerfile: client.Dockerfile
+      target: ${FRONTEND_BUILD_MODE}
     ports:
-      - "3000:3000"
+      - "${FRONTEND_PORT}:${FRONTEND_INTERNAL_PORT}"
     volumes:
       - ./client:/app
-      - /app/node_modules  # Prevents node_modules overwrite
+      - /app/node_modules
     environment:
-      - CHOKIDAR_USEPOLLING=true  # Enables file watching inside Docker
+      - CHOKIDAR_USEPOLLING=true
     depends_on:
       - backend

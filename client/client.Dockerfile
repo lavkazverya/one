@@ -1,27 +1,22 @@
-# Use a node image to build the React app
-FROM node:18-alpine AS build
-
+# Stage 1: Base image with Node
+FROM node:18-alpine AS base
 WORKDIR /app
-
-# Copy package.json and package-lock.json
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy the rest of the application
+# Stage 2: Development
+FROM base AS dev
 COPY . .
+ENV CHOKIDAR_USEPOLLING=true
+CMD ["npm", "start"]
 
-# Build the React application
+# Stage 3: Production build
+FROM base AS build
+COPY . .
 RUN npm run build
 
-# Use an nginx server for serving the built React app
-FROM nginx:alpine
-
-# Copy the build output to Nginx’s html folder
+# Stage 4: Serve production build
+FROM nginx:alpine AS prod
 COPY --from=build /app/build /usr/share/nginx/html
-
-# Expose port 80
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
