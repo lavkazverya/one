@@ -14,6 +14,17 @@ function EchoPage() {
   );
 }
 
+function ChatPage() {
+  return(
+    <>
+    <h1>Chat Page</h1>
+    <hr/>
+    <a href="/"><button >Home</button></a>
+    </>
+  );
+}
+
+
 function HomePage() {
   return(
     <>
@@ -23,6 +34,7 @@ function HomePage() {
        </header>
        <h1>Welcome to the Demo, Rick</h1>
        <a href="/echo"><button >Echo</button></a>
+       <a href="/chat"><button >Chat</button></a>
     </div>
     </>
   );
